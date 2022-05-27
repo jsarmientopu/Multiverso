@@ -7,11 +7,18 @@ public class Universo {
 	private ArrayList<String> personas;
 	private Universo next;
 	private Universo nextcapa;
-	
+	private String id;
+	private int conexiones;
 	
 	public Universo(String nombre) {
-		super();
 		this.nombre = nombre;
+		this.next = null;
+		this.nextcapa = null;
+	}
+	public Universo() {
+		this.nombre = null;
+		this.next = null;
+		this.nextcapa = null;
 	}
 	public String getNombre() {
 		return nombre;
@@ -21,6 +28,18 @@ public class Universo {
 	}
 	public ArrayList<String> getPersonas() {
 		return personas;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public int getConexiones() {
+		return conexiones;
+	}
+	public void setConexiones(int conexiones) {
+		this.conexiones = conexiones;
 	}
 	public void setPersonas(ArrayList<String> personas) {
 		this.personas = personas;

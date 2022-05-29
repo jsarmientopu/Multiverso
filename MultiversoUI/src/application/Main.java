@@ -17,7 +17,7 @@ public class Main extends Application {
 		logica.crear();
 		try {
 			AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("/vista/Vista.fxml"));
-			Scene scene = new Scene(root,850,578);
+			Scene scene = new Scene(root,1008,653);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Incio Sesión");

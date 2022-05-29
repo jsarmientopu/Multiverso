@@ -7,7 +7,7 @@ public class Universo {
 	private ArrayList<String> personas;
 	private Universo next;
 	private Universo nextcapa;
-	private String id;
+	private int id;
 	private int conexiones;
 	
 	public Universo(String nombre) {
@@ -29,10 +29,10 @@ public class Universo {
 	public ArrayList<String> getPersonas() {
 		return personas;
 	}
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public int getConexiones() {

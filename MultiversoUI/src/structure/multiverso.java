@@ -15,8 +15,8 @@ public class multiverso {
 		Universo baj = new Universo();
 		this.subida = sub;
 		this.bajada = baj;
-		subida.setId("0");
-		bajada.setId("0");
+		subida.setId(0);
+		bajada.setId(0);
 		sub.setNext(baj);
 		baj.setNext(sub);
 		
@@ -30,16 +30,16 @@ public class multiverso {
 		return this.bajada;
 	}
 	
-	public void add(String nombre, String con) {
+	public Universo add(String nombre, Universo conexion) {
 		
 		Universo newUniverse = new Universo(nombre);
-		Universo conexion = buscar(con);
-		int id = Integer.valueOf(conexion.getId().charAt(0));
+		int id = conexion.getId();
+		newUniverse.setId(conexion.getId());
 		Universo current = subida;
-		int id2 = Integer.valueOf(subida.getId().charAt(0));
+		int id2 = subida.getId();
 		while(id2 != id) {
 			current = current.getNextcapa();
-			id2 = Integer.valueOf(current.getId().charAt(0));
+			id2 = current.getId();
 		}
 		while(current.getNext()!=conexion) {
 			current = current.getNext();
@@ -50,72 +50,80 @@ public class multiverso {
 			newUniverse.setNext(conexion);
 			current.setNext(newUniverse);
 		}
+		return newUniverse;
 		
 	}
 	
-	public void delete(String nombre) {
+	public void delete(Universo deleted) {
 		
 		Universo raiz = subida;
-		Universo deleted = buscar(nombre);
-		if(deleted.getNextcapa()!= null) {
-			boolean bandera = false;
-			if((deleted.equals(subida))&&(deleted.getNext()!=null)) {
-				this.subida = subida.getNextcapa();
-				restaurarBajada();
-				bandera = true;
+		boolean bandera = false;
+		System.out.println("INICIO ELIMINACION");
+		if((deleted.equals(subida))&&(deleted.getNextcapa()!=null)) {
+			if(contarUniversos(subida)<=2){
+				if(contarUniversos(subida.getNextcapa())>=2) {
+					this.subida = subida.getNextcapa();
+					restaurarBajada();
+					bandera = false;	
+				}
 			}else {
-				for(int i = 0; i<=capas; i++) {
-					Universo current = raiz;
-					if(current.getNextcapa().getNombre() == nombre) {
-						bandera = false;
-						if(contarUniversos(current.getNextcapa())<=2) {
-							current.getNextcapa().getNext().setNext(current.getNext().getNext());
-							current.setNext(current.getNextcapa().getNext());
-							arreglarBajada(current.getNextcapa());
-							if(current.getNextcapa().getNextcapa()!=null) {
-								current.setNextcapa(current.getNextcapa().getNextcapa());
-							}else {
-								current.setNextcapa(null);
-							}
-						}else {
-							Universo current2 =current.getNextcapa();
-							while(current2.getNextcapa()!= null) {
-								current2 = current2.getNext();
-							}
-							current2.setNextcapa(current.getNextcapa().getNextcapa());
-							current.setNextcapa(current2);
-						}
-						break;
-					}
-					raiz = raiz.getNextcapa();
-				}
-			}
-			if(bandera) {
-				if(contarUniversos(deleted)<=2) {
-					if(deleted.equals(bajada)) {
-						if(subida.getNextcapa()!=null) {
-							restaurarBajada();
-							this.subida = deleted.getNext();
-						}
-					}else {
-						if(deleted.getNext().getNextcapa()!=null) {
-							arreglarBajadaCapa(deleted.getNext().getNextcapa());
-							arreglarSubida(deleted.getNext());
-						}else {
-							arreglarSubidaBajaCapa(deleted.getNext());
-						}
-					}
-				}else {
-					arreglarBajada(deleted);
-				}
+				this.subida = subida.getNext();
 			}
 		}else {
+			for(int i = 0; i<=capas; i++) {
+				Universo current = raiz;
+				if(current.getNextcapa() == deleted) {
+					bandera = false;
+					if(contarUniversos(current.getNextcapa())<=2) {
+						current.getNextcapa().getNext().setNext(current.getNext());
+						current.setNext(current.getNextcapa().getNext());
+						current.getNextcapa().getNext().setId(current.getId());
+						arreglarBajada(current.getNextcapa());
+						if(current.getNextcapa().getNextcapa()!=null) {
+							current.setNextcapa(current.getNextcapa().getNextcapa());
+						}else {
+							current.setNextcapa(null);
+						}
+						System.out.println("SALGO");
+					}else {
+						Universo current2 =current.getNextcapa();
+						while(current2.getNextcapa()!= null) {
+							current2 = current2.getNext();
+						}
+						current2.setNextcapa(current.getNextcapa().getNextcapa());
+						current.setNextcapa(current2);
+					}
+					break;
+				}
+				raiz = raiz.getNextcapa();
+			}
+		}
+		if(bandera &&(deleted.getNextcapa()!=null)) {
+			if(contarUniversos(deleted)<=2) {
+				if(deleted.equals(bajada)) {
+					if((subida.getNextcapa()!=null)&&(contarUniversos(subida.getNextcapa())>2)) {
+						restaurarBajada();
+						this.subida = this.subida.getNextcapa();
+					}
+				}else {
+					if(deleted.getNext().getNextcapa()!=null) {
+						arreglarBajadaCapa(deleted.getNext().getNextcapa());
+						arreglarSubida(deleted.getNext());
+					}else {
+						arreglarSubidaBajaCapa(deleted.getNext());
+					}
+				}
+			}else {
+				arreglarBajada(deleted);
+			}
+		}else if(bandera){
 			Universo current = deleted;
 			while(current.getNext().equals(deleted)==false) {
 				current = current.getNext();
 			}
 			current.setNext(current.getNext().getNext());
 		}
+		System.out.println("FINAL ELIMINACIÓN");
 		
 		
 		
@@ -136,10 +144,10 @@ public class multiverso {
 			}
 			current.setNextcapa(universo);
 			universo.setNext(relleno);
-			universo.setId(String.valueOf(Integer.valueOf(current.getId())+1));
+			universo.setId(current.getId()+1);
 			relleno.setNext(universo);
-			relleno.setId(universo.getId());
-			Universo current2 = current;
+			relleno.setId(current.getId()+1);
+			Universo current2 = current.getNext();
 			while(current2.getNextcapa()==null) {
 				current2 = current2.getNext();
 			}
@@ -155,6 +163,7 @@ public class multiverso {
 			}
 			if(current.getNombre() == null) {
 				current.setNombre(nombreUniverso);
+				System.out.println(nombreUniverso);
 				return current;
 			}else {
 				universo.setNext(universoRaizcapa);
@@ -166,93 +175,58 @@ public class multiverso {
 		
 	}
 	
-	public Universo viajar(Universo current, int a) {
-		
-		if((a<=0)||(a>2)) {
-			return null;
-		}else {
-			if(a == 1) {
-				return current.getNext();
-			}else {
-				return current.getNextcapa();
+	
+	
+	public Universo viaje(Universo current, Universo llegada) {
+		System.out.println("----------------------------------------------------------------------");
+		System.out.println("VIAJE");
+		Universo current2 = current;
+		if(current.getId()!=llegada.getId()) {
+			if(current.getId()>llegada.getId()) {
+				Universo inc = buscarBajada(current.getId());
+				System.out.println("BAJADA= "+inc.getNombre());
+				while(current2!=inc) {
+					System.out.println(current2.getNombre());
+					current2 = current2.getNext();
+				}
+			}else{
+				Universo dec = buscarSubida(current.getId());
+				while(current2!=dec) {
+					System.out.println(current2.getNombre());
+					current2 = current2.getNext();
+				}
+			}
+
+			System.out.println("BAJADA= "+current2.getNombre());
+			while(current2.getId() != llegada.getId()) {
+				System.out.println(current2.getNombre());
+				current2 = current2.getNextcapa();
 			}
 		}
-		
+		while(current2!=llegada) {
+			System.out.println(current2.getNombre());
+			current2 = current2.getNext();
+		}
+		return current2;
 	}
 	
-	public 	Universo viajar2(int capa, int valor) {
-		
+	public Universo buscarSubida(int id) {
 		Universo current = subida;
-		for(int i = 0; i< capa;i++) {
+		while(current.getId()!=id) {
 			current = current.getNextcapa();
 		}
-		for(int i2 = 0; i2 < valor; i2++) {
+		return current;
+	}
+	public Universo buscarBajada(int id) {
+		Universo current = subida;
+		while(current.getId() != id) {
+			current = current.getNextcapa();
+		}
+		current = current.getNext();
+		while(current.getNextcapa()==null) {
 			current = current.getNext();
 		}
 		return current;
-		
-	}
-	
-	public Universo viajarSiguiente(boolean cambiarCapa) {
-		
-		Universo current = subida;
-		if(cambiarCapa) {
-			return current.getNextcapa();
-		}else {
-			return current.getNext();
-		}
-		
-	}
-	
-	public Universo buscar(String nombre) {
-		
-		Universo raiz = subida;
-		for(int i = 0; i<=capas; i++) {
-			Universo current = raiz;
-			while(current.getNext() != raiz) {
-				if(current.getNombre() == nombre) {
-					return current;
-				}
-				current = current.getNext();
-			}
-			if(current.getNombre() == nombre) {
-				return current;
-			}
-			raiz = raiz.getNextcapa();
-		}
-		return null;
-		
-	}
-	
-	public void arreglarCon() {
-		
-		Universo raizCapa = subida.getNextcapa();
-		for(int i = 0; i<capas; i++) {
-			Universo current = raizCapa;
-			int contador= 0;
-			while(current.getNext() != raizCapa) {
-				current = current.getNext();
-				if(contador %2 != 0) {
-					current.setNextcapa(viajar2(i, contador));
-				}
-				contador++;
-			}
-			raizCapa = raizCapa.getNextcapa();
-		}
-		Universo raiz = subida;
-		for(int i = 0; i<capas; i++) {
-			Universo current = raiz;
-			int contador= 0;
-			while(current.getNext() != raiz) {
-				current = current.getNext();
-				if(contador %2 == 0) {
-					current.setNextcapa(viajar2(i+1, contador));
-				}
-				contador++;
-			}
-			raiz = raiz.getNextcapa();
-		}
-		
 	}
 	
 	public static int contarUniversos(Universo current) {
@@ -293,34 +267,11 @@ public class multiverso {
 		if(universe.getNextcapa() == null) {
 			universe.getNext().setNextcapa(null);
 		}else {
-			Universo current = subida;
-			for(int i=0; i< capas; i++) {
-				boolean bandera = false;
-				Universo current2 = current;
-				while(current.equals(current2)==false) {
-					if(current2.equals(universe)) {
-						bandera = true;
-						break;
-					}
-					current2 = current2.getNext();
-				}
-				current = current.getNextcapa();
-				if(bandera) {
-					break;
-				}
-			}
-			while((current.getNext().getNextcapa()==null)) {
-				current = current.getNext();
-			}
-			Universo a = universe;
-			while(a.getNextcapa()!=null) {
-				a.getNext();
-			}
-			a.setNextcapa(universe.getNextcapa());
-			current.setNextcapa(a);
+			arreglarBajadaCapa(universe);
 		}
 		
 	}
+	
 	
 	public void arreglarSubida(Universo universe) {
 		Universo current = subida;
@@ -337,6 +288,23 @@ public class multiverso {
 		}
 		universe.setNext(current.getNext().getNext());
 		current.setNext(universe);
+	}
+	
+	public ArrayList<Universo> universosMulti(){
+		ArrayList<Universo> a = new ArrayList<Universo>();
+		Universo current = subida.getNext();
+		Universo raiz = subida;
+		a.add(subida);
+		while(current!=null) {
+			a.add(current);
+			if(current.getNext().equals(raiz)) {
+				current = current.getNext().getNextcapa();
+				raiz = current;
+			}else {
+				current = current.getNext();
+			}
+		}
+		return a;
 	}
 	
 }

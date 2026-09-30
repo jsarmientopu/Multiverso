@@ -1,9 +1,5 @@
-We used Overleaf as our collaborative writing tool. The document is available at the following link: https://www.overleaf.com/9446437327nhgstvpxzkbb#9219f8.
+# Multiverso
 
-Individual contributions can be reviewed by clicking History in the top-right corner of the Overleaf editor.
+**Multiverso** is a Java project developed as part of a **Data Structures** course. The project focuses on applying data structures and algorithmic concepts to the development of an interactive application, combining the underlying data management with a graphical user interface.
 
-Below are the email addresses associated with each team member:
-
-- jsarmientopu@unal.edu.co — Juan Sebastian Sarmiento Pulido
-- pavillarinho@gmail.com — Pedro Augusto Villarinho dos Santos
-- eslopezb@unal.edu.co — Esteban Lopez Barreto
+The project was developed collaboratively and includes a dedicated UI component for interacting with the application.
